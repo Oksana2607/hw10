@@ -1,4 +1,8 @@
 const convertToCSV = array => {
+    if (array === undefined || array === null || !array.length) {
+        return 'id,firstName,lastName,age';
+    }
+
     let keys = Object.keys(array[0]);
     let result = keys.join(",") + "\n";
 
@@ -31,40 +35,21 @@ const convertToYaml = array => {
 };
 
 const convertToXML = array => {
-    let xml = '<root>';
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n` ;
+    xml += `<persons>\n`;
 
-    for (let object of array) {
-        xml += convertObjectToXML(object);
+    for (let i = 0; i < array.length; i++) {
+        xml += `\t<person_${i}>\n`;
+        xml += `\t\t<id>${array[i].id}</id>\n`;
+        xml += `\t\t<firstName>${array[i].firstName}</firstName>\n`;
+        xml += `\t\t<lastName>${array[i].lastName}</lastName>\n`;
+        xml += `\t\t<age>${array[i].age}y</age>\n`;
+        xml += `\t</person_${i}>\n`;
     }
-
-    return xml + '</root>';
-};
-
-function convertObjectToXML(object) {
-    let xml = '';
-
-    for (let prop in object) {
-        if (!object.hasOwnProperty(prop)) {
-            continue;
-        }
-
-        if (!object[prop]) {
-            continue;
-        }
-
-        xml += "<" + prop + ">";
-
-        if (typeof object[prop] == "object") {
-            xml += convertObjectToXML(new Object(object[prop]));
-        } else {
-            xml += object[prop];
-        }
-
-        xml += "</" + prop + ">" ;
-    }
+    xml += `</persons>\n`;
 
     return xml;
-}
+};
 
 const convertToJSON = array => {
     let result = '[';

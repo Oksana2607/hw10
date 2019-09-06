@@ -249,15 +249,15 @@ const onClickByIndexDelete = () => {
 };
 
 const convertToCSV = array => {
-    if (array.length === 0) {
-        return '';
+    if (array === undefined || array === null || !array.length) {
+        return 'id,firstName,lastName,age';
     }
 
     let keys = Object.keys(array[0]);
     let result = keys.join(",") + "\n";
 
-    array.forEach(obj => {
-        keys.forEach((ind, value) => {
+    array.forEach(function(obj){
+        keys.forEach(function(ind, value){
             if (value) {
                 result += ",";
             }
@@ -286,39 +286,21 @@ const convertToYaml = array => {
 };
 
 const convertToXML = array => {
-    let xml = '<root>';
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n` ;
+    xml += `<persons>\n`;
 
-    for (let object of array) {
-        xml += convertObjectToXML(object);
+    for (let i = 0; i < array.length; i++) {
+        xml += `\t<person_${i}>\n`;
+        xml += `\t\t<id>${array[i].id}</id>\n`;
+        xml += `\t\t<firstName>${array[i].firstName}</firstName>\n`;
+        xml += `\t\t<lastName>${array[i].lastName}</lastName>\n`;
+        xml += `\t\t<age>${array[i].age}y</age>\n`;
+        xml += `\t</person_${i}>\n`;
     }
-
-    return xml + '</root>';
-};
-
-function convertObjectToXML(object) {
-    let xml = '';
-    for (let prop in object) {
-        if (!object.hasOwnProperty(prop)) {
-            continue;
-        }
-
-        if (!object[prop]) {
-            continue;
-        }
-
-        xml += "<" + prop + ">";
-
-        if (typeof object[prop] == "object") {
-            xml += convertObjectToXML(new Object(object[prop]));
-        } else {
-            xml += object[prop];
-        }
-
-        xml += "</" + prop + ">" ;
-    }
+    xml += `</persons>\n`;
 
     return xml;
-}
+};
 
 const convertToJSON = array => {
     let result = '[';
@@ -392,26 +374,22 @@ const onClickSaveJSON = () => {
 };
 
 const onClickSendCSV = () => {
-    postData('http://localhost:3000/csv',  array.getArray())
-        //.then(data => console.log(convertToJSON(data))) // JSON-строка полученная после вызова `response.json()`
+    postData('http://localhost:3000/csv',  array.getArray())        
         .catch(error => console.error(error));
 };
 
 const onClickSendYaml = () => {
-    postData('http://localhost:3000/yaml',  array.getArray())
-       // .then(data => console.log(convertToJSON(data))) // JSON-строка полученная после вызова `response.json()`
+    postData('http://localhost:3000/yaml',  array.getArray())       
         .catch(error => console.error(error));
 };
 
 const onClickSendXML = () => {
-    postData('http://localhost:3000/xml',  array.getArray())
-        //.then(data => console.log(convertToJSON(data))) // JSON-строка полученная после вызова `response.json()`
+    postData('http://localhost:3000/xml',  array.getArray())        
         .catch(error => console.error(error));
 };
 
 const onClickSendJSON = () => {
-    postData('http://localhost:3000/json',  array.getArray())
-        //.then(data => console.log(convertToJSON(data))) // JSON-строка полученная после вызова `response.json()`
+    postData('http://localhost:3000/json',  array.getArray())        
         .catch(error => console.error(error));
 };
 
@@ -425,8 +403,7 @@ function postData(url = '', data = {}) {
             'Content-Type': 'application/json'
         },
         body: convertToJSON(data)
-    })
-        //.then(response => response.json());
+    })       
 }
 
 init();
